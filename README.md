@@ -1,92 +1,150 @@
-# DBaST
+<h1>
+  <br>
+  <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast/-/archive/main/dbast-main.zip">ELISL</a>
+</h1> 
+
+<h4 align="center">Diversity-guided Balanced Self-Training</h4>
+
+<p>
+    <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast/-/commits/main">
+    <img src="https://img.shields.io/badge/last%20commit-september-yellow"
+         alt="GitHub last commit">
+    <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast/-/issues">
+    <img src="https://img.shields.io/badge/open%20issues-0-green"
+         alt="GitHub issues">
+    <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast/-/branches">
+    <img src="https://img.shields.io/badge/branches-1-blue"
+         alt="GitHub branches">
+    <a href="https://twitter.com/intent/tweet?text=Try debiasing your ML models with DBaST from @GoncalvesLab &url=https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast">
+    <img src="https://img.shields.io/twitter/url?url=https%3A%2F%2Fgitlab.ewi.tudelft.nl%2Fgoncalveslab/phd-thesis-2020-yasin-tepeli/dbast" alt="GitHub tweet">
+    
+</p>
+      
+<p>
+  <a href="#abstract">Abstract</a> •
+  <a href="#repository-description">Repository Description</a> •
+  <a href="#framework-and-single-cancer-experiment">Framework and Single Cancer Experiment</a> •
+  <a href="#installation-and-dependencies">Installation and Dependencies</a> •
+  <a href="#dataset-generation">Dataset Generation</a> •
+  <a href="#direct-usage-of-elisl">Direct Usage of ELISL</a> •
+  <a href="#code-integration">Code Integration</a> •
+  <a href="#bibtext-reference">Bibtext Reference</a> •
+  <a href="#license">License</a>
+</p>
 
 
+---
 
-## Getting started
+## Abstract
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+<table>
+<tr>
+<td>
+  
+Sample selection bias (SSB) is a prevalent issue in machine learning when training data deviates from the ideal independent and identically distributed (i.i.d.) assumption which leads to unfair models and subpar performance. Existing SSB mitigation methods, designed primarily for domain adaptation, are ineffective for unseen test sets, rely on often violated assumptions, and are not model-agnostic. Moreover, common semi-supervised learning techniques, such as Self-training, which includes extra unlabeled data in training, hold promise but often fail to effectively address SSB and may even strengthen it.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+We propose Diversity-guided Balanced Self-Training (DBaST), which iteratively incorporates diverse and unbiased unlabeled samples into the training process while preserving class balance to prevent further bias. Extensive testing across 11 real-world datasets demonstrated DBaST's consistent efficacy in mitigating different types of SSB without performance degradation, unlike the previous techniques. Thus, DBaST holds significant promise in effectively addressing SSB challenges and promoting fair learning.
 
-## Add your files
+(Published in ...  <a href="#">DBaST: Mitigating Sample Selection Bias for Fair Learning</a>)
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+</td>
+</tr>
+</table>
 
+
+## Framework and Single Cancer Experiment
+![DBaST Framework](bias_mitigation_framework.png "DBaST Framework")
+*Diversity-guided Balanced Self-training (DBaST) framework.*
+**Left**: Input of the DBaST framework. DBaST takes labeled data, unlabeled data, number of maximum iterations $m$, number of selections in each iteration $s$, prediction probability threshold $t$, and diversity strength $d$ as input. **Middle:** Self-training module. In each iteration, a model trained with labeled samples is used to predict pseudo-labels of unlabeled samples, and selected samples are added to the labeled set with their pseudo-labels. The pseudo-labeling procedure is repeated for each class separately, ensuring that the class balance of pseudo-labeled samples is the same as labeled samples. **Right:** The diversity module. Separates the pseudo-labeling process for each class and ensures that at each iteration, the unlabeled samples that are pseudo-labeled and added to the labeled set are confidently predicted, diverse, and different from each other. For each class, it first selects the most confident $s*d$ predictions whose prediction probability is over a threshold $t$ and creates supervised embeddings for them, which then can be used to measure the similarity between the prediction of each unlabeled sample. Then using the similarities, \textit{DBaST} creates \textit{s} clusters that are different from each other and selects the most confident prediction from each cluster. Then pseudo-labels the $s$ selected samples. This way, it still selects confident samples but ensures that we don't select the same type of predictions repeatedly. Note that when $d=1$, DBaST loses the diversity approach and becomes BaST.
+
+
+## Repository Description
+
+##### Folder hierarchy:
+* **data**: Includes all the data for feature generation or experiments.
+  * **datasets**: Includes different types of tabular datasets.
+  * **graphs**: Data folder for graphs.
+* **logs**: Log files for each of the experiment and feature generation.
+* **results**: json model files and csv experiment performance result files.
+* **src**: Includes all the codes for the application.
+  * **analysis**: Includes the codes for visualization and reporting the results.
+  * **datasets**: Includes codes to process graph data.
+  * **test**: Includes the files for the main experiments.
+  * **lib**: Includes some utility codes and common visual functions for project.
+  * **models**: Includes DBaST model for logistic regression (LR), neural network (NN), and regularized random forest (RRF). For NN and RRF, it also includes Feature-space level diversity for models (FSD).
+  * **bias_techniques.py**: File to call functions of different bias induction methods.
+  * * **config.py**: File that loads the settings of the project.
+  * * **load_dataset.py**: File to load datasets.
+
+
+## Installation and Dependencies
+
+##### Dependencies
+* Python3.9
+* Packages: conda_requirements.txt
+
+##### Installation
+* Open terminal and go to the folder to install the project
+* Clone the project: `git clone https://gitlab.tudelft.nl/ytepeli/ELISL.git`
+* Enter project and install requirements: `cd ELISL | conda create --name DBAST --file conda_requirements.txt`
+
+## Preparation of Data
+
+### Loading a Dataset 
 ```
-cd existing_repo
-git remote add origin https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast.git
-git branch -M main
-git push -uf origin main
+from src import load_dataset as ld
+dataset_name='breast_cancer'
+dataset_args = {}
+x_train, y_train, x_test, y_test = ld.load_dataset(dataset_name, **dataset_args, test=True)
 ```
 
-## Integrate with your tools
+### Biasing a set
+* Induce hierarchy bias with 0.9 strength by choosing 30 samples from each class. 
+```
+from src import bias_techniques as bt
+bias_params = {'max_size': 30, 'prob': 0.9}
+selections = bt.get_bias('hierarchy', X, y, **bias_params).astype(int)
+X_biased, y_biased = X[selections, :], y[selections]
+```
+* Induce custom bias with bias arguments.
+```
+from src import bias_techniques as bt
+selections = bt.get_bias(bias_name, X, **bias_params).astype(int)
+X_biased, y_biased = X[selections, :], y[selections]
+```
 
-- [ ] [Set up project integrations](https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast/-/settings/integrations)
+## Reproducing Results
+### Neural network experiment
+```shell script
+python3.6 src/test/nn_bias_test_nb_imb2seed.py --bias hierarchy_0.9 --dataset breast_cancer --bias_size 30 -es
+```
+You can see the saved model and results in `results_nn_test_nb_imb_ss/bias_name/dataset_name` folder.
 
-## Collaborate with your team
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Reproducing Results
+### Usage of DBaST model
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+## Code Integration
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+# Bibtex-Reference
+```
+@article{tepeli2021elisl,
+  title={Early-Late Integrated Synthetic Lethality Prediction in Cancer},
+  author={Tepeli, Yasin and Seale, Colm and Goncalves, Joana},
+  journal={Nature Machine Intelligence},
+  volume={00},
+  number={0},
+  pages={000},
+  year={2021},
+  publisher={Springer Science and Business Media {LLC}}
+}
+```
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg?style=flat-square)](https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3))
+
+- Copyright © [ytepeli].
+
