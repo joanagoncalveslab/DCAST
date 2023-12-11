@@ -1,6 +1,6 @@
 <h1>
   <br>
-  <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/dbast/-/archive/main/dbast-main.zip">ELISL</a>
+  <a href="https://github.com/joanagoncalveslab/DBaST/archive/refs/heads/main.zip">DBaST</a>
 </h1> 
 
 <h4 align="center">Diversity-guided Balanced Self-Training</h4>
