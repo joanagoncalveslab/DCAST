@@ -18,6 +18,8 @@ warnings.filterwarnings('ignore')
 from matplotlib import rcParams
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
+rcParams['font.sans-serif'] = "Arial"
+rcParams['font.family'] = "Arial"
 
 import argparse
 
