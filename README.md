@@ -6,16 +6,16 @@
 <h4 align="center">Diverse Class-Aware Self-Training</h4>
 
 <p>
-    <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/DCAST/-/commits/main">
+    <a href="https://github.com/joanagoncalveslab/DCAST/commits/main/">
     <img src="https://img.shields.io/badge/last%20commit-september-yellow"
          alt="GitHub last commit">
-    <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/DCAST/-/issues">
+    <a href="https://github.com/joanagoncalveslab/DCAST/issues">
     <img src="https://img.shields.io/badge/open%20issues-0-green"
          alt="GitHub issues">
-    <a href="https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/DCAST/-/branches">
+    <a href="https://github.com/joanagoncalveslab/DCAST/branches">
     <img src="https://img.shields.io/badge/branches-1-blue"
          alt="GitHub branches">
-    <a href="https://twitter.com/intent/tweet?text=Try biasing and debiasing your ML models with hierarhcy bias and DCAST from @GoncalvesLab &url=https://gitlab.ewi.tudelft.nl/goncalveslab/phd-thesis-2020-yasin-tepeli/DCAST">
+    <a href="https://twitter.com/intent/tweet?text=Try biasing and debiasing your ML models with hierarhcy bias and DCAST from @GoncalvesLab &url=https://github.com/joanagoncalveslab/DCAST">
     <img src="https://img.shields.io/twitter/url?url=https%3A%2F%2Fgitlab.ewi.tudelft.nl%2Fgoncalveslab/phd-thesis-2020-yasin-tepeli/DCAST" alt="GitHub tweet">
     
 </p>
@@ -53,7 +53,7 @@ Fairness in machine learning seeks to mitigate bias against individuals based on
 
 
 ## Bias Induction Framework
-![Hierarchy Framework](bias_mitigation_framework.png "Hierarchy Framework")
+![Hierarchy Framework](bias_induction_framework.png "Hierarchy Framework")
 **Hierarchy bias approach for induction of selection bias.**
 Given input data $\boldsymbol{X}$ with labels $\boldsymbol{y}$, number of samples to select $k$, and bias ratio $b \in [0,1]$, hierarchy bias selects $k$ samples per class $c$: $k \times b$ from a specific group and $k \times (1-b)$ from the remaining samples. Each class-specific candidate group (for class $c$) is identified via agglomerative hierarchical clustering with Euclidean distances and Ward linkage of the $c$-labeled samples until a cluster of size $\geq k$ is obtained, from which $k \times b$ samples are uniformly drawn. The $k \times (1-b)$ samples are uniformly drawn from the remaining $c$-labeled samples. 
 
